@@ -15,12 +15,20 @@ public:
 
 	SmartPointer(const SmartPointer<T> &sp) {
 		pointer = sp.pointer;
-		RefCounter::getInstance().use(pointer);
+		use();
 	}
 
 	SmartPointer(T * pValue) {
 		pointer = pValue;
-		RefCounter::getInstance().use(pointer);
+		use();
+	}
+
+	SmartPointer<T>& operator=(SmartPointer<T> sp) {
+		unuse();
+		pointer = sp.pointer;
+		use();
+
+		return *this;
 	}
 
 	// Destructeur
@@ -33,7 +41,7 @@ public:
 	  return *pointer;
 	}
 
-  	T* operator->(){
+	T* operator->(){
 	  return pointer;
 	}
 
@@ -45,19 +53,25 @@ public:
 		return pointer != sp.pointer;
 	}
 
-	SmartPointer<T>& operator=(SmartPointer<T> sp) {
-		unuse();
-		pointer = sp.pointer;
-		RefCounter::getInstance().use(pointer);
-		
-		return *this;
+	T& operator[](unsigned int index) {
+		return pointer[index];
 	}
-	
+
+	T* operator+(unsigned int i) {
+		return pointer + i;
+	}
+
 private:
-  	T* pointer;
+	T* pointer;
+
+	void use() {
+		if (pointer != NULL) {
+			RefCounter::getInstance().use(pointer);
+		}
+	}
 
 	void unuse() {
-		if (RefCounter::getInstance().unuse(pointer)) {
+		if (pointer != NULL && RefCounter::getInstance().unuse(pointer)) {
 			delete pointer;
 			pointer = NULL;
 		}

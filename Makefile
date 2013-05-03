@@ -1,16 +1,19 @@
+CC=g++
 BIN=bin
 EXEC=main
+LDFLAGS=-g -Wall -ansi -pedantic -std=c++0x
+CCFLAGS=-c ${LDFLAGS}
 
 all: ${EXEC}
 
 main: ${BIN}/main.o ${BIN}/ref-counter.o
-	g++ -g -Wall -ansi -pedantic $^ -o $@
+	${CC} ${LDFLAGS} $^ -o $@
 
 ${BIN}/main.o: main.cpp smart-pointer.hpp
-	g++ -g -c -Wall -ansi -pedantic $< -o $@
+	${CC} ${CCFLAGS} $< -o $@
 
 ${BIN}/ref-counter.o: ref-counter.cpp
-	g++ -g -c -Wall -ansi -pedantic $< -o $@
+	${CC} ${CCFLAGS} $< -o $@
 
 clean:
 	\rm -f ${BIN}/*.o ${EXEC}

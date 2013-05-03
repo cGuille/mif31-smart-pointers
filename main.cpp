@@ -3,21 +3,25 @@
 #include <string>
 #include "usingio.hpp"
 
-struct A {
-    SmartPointer<struct B> s_spB;
-};
-
-struct B {
-    SmartPointer<struct A> s_spA;
-};
 
 int main(void)
 {
-    SmartPointer<struct A> spA;
+    /*
+    // Référence cyclique: pose problème avec 
+    // (seulement) un compteur de références.
+    struct A {
+        SmartPointer<struct B> s_spB;
+    };
+
+    struct B {
+        SmartPointer<struct A> s_spA;
+    };
+    SmartPointer<struct A> spA = new struct A;
 
     spA->s_spB = new struct B;
     spA->s_spB-> s_spA = spA;
-/*
+    */
+
     SmartPointer<int> tab = new int[2];
     tab[0] = 0;
     tab[1] = 1;
@@ -66,6 +70,6 @@ int main(void)
     cout << *sp2 << endl;
     cout << *sp3 << endl;
     cout << endl;
-*/
+
 	return EXIT_SUCCESS;
 }

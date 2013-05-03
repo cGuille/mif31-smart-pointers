@@ -1,7 +1,8 @@
-#ifndef __SMART_POINTER_H_INCLUDED__
-#define __SMART_POINTER_H_INCLUDED__
+#ifndef __SMART_POINTER_HPP_INCLUDED__
+#define __SMART_POINTER_HPP_INCLUDED__
 
 #include <iostream>
+#include "ref-counter.hpp"
 
 template<typename T>
 class SmartPointer
@@ -10,22 +11,21 @@ public:
 	// Constructeurs
 	SmartPointer() {
 		pointer = NULL;
-		refCount = 0;
 	}
 
 	SmartPointer(const SmartPointer<T> &sp) {
 		pointer = sp.pointer;
-		refCount = sp.refCount;
+		RefCounter::getInstance().use(pointer);
 	}
 
 	SmartPointer(T * pValue) {
 		pointer = pValue;
-		refCount = 1;
+		RefCounter::getInstance().use(pointer);
 	}
 
 	// Destructeur
 	~SmartPointer() {
-		decrement();
+		unuse();
 	}
 
 	// Opérateurs
@@ -46,32 +46,22 @@ public:
 	}
 
 	SmartPointer<T>& operator=(SmartPointer<T> sp) {
-		decrement();
+		unuse();
 		pointer = sp.pointer;
-		refCount = sp.refCount;
-		increment();
-		sp.increment();
+		RefCounter::getInstance().use(pointer);
 		
 		return *this;
 	}
 	
 private:
- 	int refCount;
   	T* pointer;
 
-	void increment() {
-		refCount++;
-	}
-
-	void decrement() {
-		refCount--;
-		
-		if (refCount == 0 && pointer != NULL)
-		{
+	void unuse() {
+		if (RefCounter::getInstance().unuse(pointer)) {
 			delete pointer;
 			pointer = NULL;
 		}
 	}
 };
 
-#endif /* __SMART_POINTER_H_INCLUDED__ */
+#endif

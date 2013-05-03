@@ -1,8 +1,33 @@
 #include "smart-pointer.hpp"
+#include <iostream>
+#include <string>
 #include "usingio.hpp"
 
 int main(void)
 {
+    SmartPointer<int> tab = new int[2];
+    tab[0] = 0;
+    tab[1] = 1;
+
+    cout << "tab[0]: " << tab[0] << endl;
+    cout << "tab[1]: " << tab[1] << endl;
+    cout << "*(tab + 1): " << *(tab + 1) << endl;
+    cout << endl;
+
+    struct Foo {
+        SmartPointer<struct Foo> bar;
+        SmartPointer<std::string> text;
+    };
+
+    struct Foo foo;
+    foo.text = new std::string("foo");
+
+    foo.bar = new Foo;
+    foo.bar->text = new std::string("bar");
+
+    cout << "foo: " << *(foo.text) << endl;
+    cout << "bar: " << *(foo.bar->text) << endl;
+    cout << endl;
 
     SmartPointer<int> sp1 = new int;
     SmartPointer<int> sp2 = sp1;
@@ -12,12 +37,22 @@ int main(void)
     cout << *sp1 << endl;
     cout << *sp2 << endl;
     cout << *sp3 << endl;
+    cout << endl;
 
+    *sp3 = 2;
+
+    cout << *sp1 << endl;
+    cout << *sp2 << endl;
+    cout << *sp3 << endl;
+    cout << endl;
+
+    sp3 = new int;
     *sp3 = 3;
 
     cout << *sp1 << endl;
     cout << *sp2 << endl;
     cout << *sp3 << endl;
+    cout << endl;
 
-	return 0;
+	return EXIT_SUCCESS;
 }

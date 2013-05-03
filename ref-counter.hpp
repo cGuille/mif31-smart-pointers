@@ -6,6 +6,7 @@
 
 class RefCounter {
 public:
+    /* The references counter is a Singleton */
     static RefCounter& getInstance() {
         static RefCounter instance;
         return instance;
